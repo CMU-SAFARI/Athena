@@ -1,0 +1,6 @@
+BasedOnStyle: LLVM
+ColumnLimit: 160
+AllowShortIfStatementsOnASingleLine: false
+AllowShortLoopsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: false
+InsertBraces: true
