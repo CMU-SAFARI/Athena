@@ -40,9 +40,19 @@ EXP_VARIABLES = {
     # Cache Design configurations
     'CD1': '--og_multi_prefetcher_enable=false --og_prefetcher_level=2',  # OCP + L2C
     'CD2': '--og_multi_prefetcher_enable=false --og_prefetcher_level=1',  # OCP + L1D
-    'CD3': '--og_multi_prefetcher_enable=true --og_coordination_mode=l2c_l2c',  # OCP + 2 L2C
-    'CD4': '--og_multi_prefetcher_enable=true --og_coordination_mode=l1d_l2c',  # OCP + L1D + L2C
+    'CD3': '--leh_num_actions=8 --og_multi_prefetcher_enable=true --og_coordination_mode=l2c_l2c',  # OCP + 2 L2C
+    'CD4': '--leh_num_actions=8 --og_multi_prefetcher_enable=true --og_coordination_mode=l1d_l2c',  # OCP + L1D + L2C
     'CD5': '--og_multi_prefetcher_enable=true --og_l2c_only_coordination=true',  # 2 L2C
+    
+    # OCP Request Latency configurations
+    'LAT18': '--ddrp_req_latency=18',
+    'LAT30': '--ddrp_req_latency=30',
+    
+    # Memory Bandwidth configurations
+    'BW200': '--dram_io_freq=200',   # 1.6 GB/s
+    'BW400': '--dram_io_freq=400',   # 3.2 GB/s (default in BASE)
+    'BW800': '--dram_io_freq=800',   # 6.4 GB/s
+    'BW1600': '--dram_io_freq=1600', # 12.8 GB/s
 }
 
 # Experiment configurations (merges experiments with their variable definitions)
@@ -96,7 +106,192 @@ EXPERIMENTS = {
             'MAB-POPET-IPCP-Pythia-': ['BASE', 'POPET', 'IPCP', 'PYTHIA', 'CD4', 'MAB'],
             'Athena-POPET-IPCP-Pythia-': ['BASE', 'POPET', 'IPCP', 'PYTHIA', 'CD4', 'ATHENA'],
         }
-    }
+    },
+    # Sensitivity Studies (grouped by parameter, not workload type)
+
+    'Fig6b': {
+        'description': 'L2C Prefetcher Type Sensitivity',
+        'sensitivity_type': 'grouped',
+        'categories': ['Pythia', 'SPP+PPF', 'MLOP', 'SMS'],
+        'category_suffix': ['-Pythia', '-SPP', '-MLOP', '-SMS'],
+        'experiment_labels': ['POPET', 'L2C', 'Naive', 'MAB', 'Athena'],
+        'experiments': {
+            'Baseline': ['BASE'],
+            # Pythia
+            'POPET-Pythia': ['BASE', 'POPET'],
+            'L2C-Pythia': ['BASE', 'PYTHIA'],
+            'Naive-Pythia': ['BASE', 'POPET', 'PYTHIA'],
+            'HPAC-Pythia': ['BASE', 'POPET', 'PYTHIA', 'CD1', 'HPAC'],
+            'MAB-Pythia': ['BASE', 'POPET', 'PYTHIA', 'CD1', 'MAB'],
+            'Athena-Pythia': ['BASE', 'POPET', 'PYTHIA', 'CD1', 'ATHENA'],
+            # SPP+PPF
+            'POPET-SPP': ['BASE', 'POPET'],
+            'L2C-SPP': ['BASE', 'SPP+PPF'],
+            'Naive-SPP': ['BASE', 'POPET', 'SPP+PPF'],
+            'HPAC-SPP': ['BASE', 'POPET', 'SPP+PPF', 'CD1', 'HPAC'],
+            'MAB-SPP': ['BASE', 'POPET', 'SPP+PPF', 'CD1', 'MAB'],
+            'Athena-SPP': ['BASE', 'POPET', 'SPP+PPF', 'CD1', 'ATHENA'],
+            # MLOP
+            'POPET-MLOP': ['BASE', 'POPET'],
+            'L2C-MLOP': ['BASE', 'MLOP'],
+            'Naive-MLOP': ['BASE', 'POPET', 'MLOP'],
+            'HPAC-MLOP': ['BASE', 'POPET', 'MLOP', 'CD1', 'HPAC'],
+            'MAB-MLOP': ['BASE', 'POPET', 'MLOP', 'CD1', 'MAB'],
+            'Athena-MLOP': ['BASE', 'POPET', 'MLOP', 'CD1', 'ATHENA'],
+            # SMS
+            'POPET-SMS': ['BASE', 'POPET'],
+            'L2C-SMS': ['BASE', 'SMS'],
+            'Naive-SMS': ['BASE', 'POPET', 'SMS'],
+            'HPAC-SMS': ['BASE', 'POPET', 'SMS', 'CD1', 'HPAC'],
+            'MAB-SMS': ['BASE', 'POPET', 'SMS', 'CD1', 'MAB'],
+            'Athena-SMS': ['BASE', 'POPET', 'SMS', 'CD1', 'ATHENA'],
+        }
+    },
+    'Fig6c': {
+        'description': 'OCP Request Latency Sensitivity',
+        'sensitivity_type': 'grouped',
+        'categories': ['6 cycles', '18 cycles', '30 cycles'],
+        'category_suffix': ['-6', '-18', '-30'],
+        'experiment_labels': ['POPET', 'Pythia', 'Naive', 'HPAC', 'MAB', 'Athena'],
+        'experiments': {
+            'Baseline': ['BASE'],
+            # 6 cycles (default latency)
+            'POPET-6': ['BASE', 'POPET'],
+            'Pythia-6': ['BASE', 'PYTHIA'],
+            'Naive-6': ['BASE', 'POPET', 'PYTHIA'],
+            'HPAC-6': ['BASE', 'POPET', 'PYTHIA', 'CD1', 'HPAC'],
+            'MAB-6': ['BASE', 'POPET', 'PYTHIA', 'CD1', 'MAB'],
+            'Athena-6': ['BASE', 'POPET', 'PYTHIA', 'CD1', 'ATHENA'],
+            # 18 cycles
+            'POPET-18': ['BASE', 'POPET', 'LAT18'],
+            'Pythia-18': ['BASE', 'PYTHIA'],
+            'Naive-18': ['BASE', 'POPET', 'PYTHIA', 'LAT18'],
+            'HPAC-18': ['BASE', 'POPET', 'PYTHIA', 'CD1', 'HPAC', 'LAT18'],
+            'MAB-18': ['BASE', 'POPET', 'PYTHIA', 'CD1', 'MAB', 'LAT18'],
+            'Athena-18': ['BASE', 'POPET', 'PYTHIA', 'CD1', 'ATHENA', 'LAT18'],
+            # 30 cycles
+            'POPET-30': ['BASE', 'POPET', 'LAT30'],
+            'Pythia-30': ['BASE', 'PYTHIA'],
+            'Naive-30': ['BASE', 'POPET', 'PYTHIA', 'LAT30'],
+            'HPAC-30': ['BASE', 'POPET', 'PYTHIA', 'CD1', 'HPAC', 'LAT30'],
+            'MAB-30': ['BASE', 'POPET', 'PYTHIA', 'CD1', 'MAB', 'LAT30'],
+            'Athena-30': ['BASE', 'POPET', 'PYTHIA', 'CD1', 'ATHENA', 'LAT30'],
+        }
+    },
+    'Fig6d': {
+        'description': 'OCP Type Sensitivity',
+        'sensitivity_type': 'grouped',
+        'categories': ['POPET', 'HMP', 'TTP'],
+        'category_suffix': ['-POPET', '-HMP', '-TTP'],
+        'experiment_labels': ['OCP', 'Pythia', 'Naive', 'HPAC', 'MAB', 'Athena'],
+        'experiments': {
+            'Baseline': ['BASE'],
+            # POPET
+            'OCP-POPET': ['BASE', 'POPET'],
+            'Pythia-POPET': ['BASE', 'PYTHIA'],
+            'Naive-POPET': ['BASE', 'POPET', 'PYTHIA'],
+            'HPAC-POPET': ['BASE', 'POPET', 'PYTHIA', 'CD1', 'HPAC'],
+            'MAB-POPET': ['BASE', 'POPET', 'PYTHIA', 'CD1', 'MAB'],
+            'Athena-POPET': ['BASE', 'POPET', 'PYTHIA', 'CD1', 'ATHENA'],
+            # HMP
+            'OCP-HMP': ['BASE', 'HMP'],
+            'Pythia-HMP': ['BASE', 'PYTHIA'],
+            'Naive-HMP': ['BASE', 'HMP', 'PYTHIA'],
+            'HPAC-HMP': ['BASE', 'HMP', 'PYTHIA', 'CD1', 'HPAC'],
+            'MAB-HMP': ['BASE', 'HMP', 'PYTHIA', 'CD1', 'MAB'],
+            'Athena-HMP': ['BASE', 'HMP', 'PYTHIA', 'CD1', 'ATHENA'],
+            # TTP
+            'OCP-TTP': ['BASE', 'TTP'],
+            'Pythia-TTP': ['BASE', 'PYTHIA'],
+            'Naive-TTP': ['BASE', 'TTP', 'PYTHIA'],
+            'HPAC-TTP': ['BASE', 'TTP', 'PYTHIA', 'CD1', 'HPAC'],
+            'MAB-TTP': ['BASE', 'TTP', 'PYTHIA', 'CD1', 'MAB'],
+            'Athena-TTP': ['BASE', 'TTP', 'PYTHIA', 'CD1', 'ATHENA'],
+        }
+    },
+    'Fig7a': {
+        'description': 'L1D Prefetcher Type Sensitivity (CD4)',
+        'sensitivity_type': 'grouped',
+        'categories': ['IPCP', 'Berti'],
+        'category_suffix': ['-IPCP', '-Berti'],
+        'experiment_labels': ['POPET', 'L1D', 'Naive', 'TLP', 'HPAC', 'MAB', 'Athena'],
+        'experiments': {
+            'Baseline': ['BASE'],
+            # IPCP
+            'POPET-IPCP': ['BASE', 'POPET'],
+            'L1D-IPCP': ['BASE', 'IPCP', 'PYTHIA'],
+            'Naive-IPCP': ['BASE', 'POPET', 'IPCP', 'PYTHIA'],
+            'TLP-IPCP': ['BASE', 'TLP', 'IPCP', 'PYTHIA'],
+            'HPAC-IPCP': ['BASE', 'POPET', 'IPCP', 'PYTHIA', 'CD4', 'HPAC'],
+            'MAB-IPCP': ['BASE', 'POPET', 'IPCP', 'PYTHIA', 'CD4', 'MAB'],
+            'Athena-IPCP': ['BASE', 'POPET', 'IPCP', 'PYTHIA', 'CD4', 'ATHENA'],
+            # Berti
+            'POPET-Berti': ['BASE', 'POPET'],
+            'L1D-Berti': ['BASE', 'BERTI', 'PYTHIA'],
+            'Naive-Berti': ['BASE', 'POPET', 'BERTI', 'PYTHIA'],
+            'TLP-Berti': ['BASE', 'TLP', 'BERTI', 'PYTHIA'],
+            'HPAC-Berti': ['BASE', 'POPET', 'BERTI', 'PYTHIA', 'CD4', 'HPAC'],
+            'MAB-Berti': ['BASE', 'POPET', 'BERTI', 'PYTHIA', 'CD4', 'MAB'],
+            'Athena-Berti': ['BASE', 'POPET', 'BERTI', 'PYTHIA', 'CD4', 'ATHENA'],
+        }
+    },
+    'Fig7b': {
+        'description': 'Memory Bandwidth Sensitivity (CD4)',
+        'sensitivity_type': 'grouped',
+        'categories': ['1.6 GB/s', '3.2 GB/s', '6.4 GB/s', '12.8 GB/s'],
+        'category_suffix': ['-1.6', '-3.2', '-6.4', '-12.8'],
+        'category_baselines': ['Baseline-1.6', 'Baseline-3.2', 'Baseline-6.4', 'Baseline-12.8'],
+        'experiment_labels': ['POPET', 'IPCP-Pythia', 'Naive', 'TLP', 'HPAC', 'MAB', 'Athena'],
+        'experiments': {
+            # Per-bandwidth baselines
+            'Baseline-1.6': ['BASE', 'BW200'],
+            'Baseline-3.2': ['BASE', 'BW400'],
+            'Baseline-6.4': ['BASE', 'BW800'],
+            'Baseline-12.8': ['BASE', 'BW1600'],
+            # 1.6 GB/s (200 MTPS)
+            'POPET-1.6': ['BASE', 'POPET', 'BW200'],
+            'IPCP-Pythia-1.6': ['BASE', 'IPCP', 'PYTHIA', 'BW200'],
+            'Naive-1.6': ['BASE', 'POPET', 'IPCP', 'PYTHIA', 'BW200'],
+            'TLP-1.6': ['BASE', 'TLP', 'IPCP', 'PYTHIA', 'BW200'],
+            'HPAC-1.6': ['BASE', 'POPET', 'IPCP', 'PYTHIA', 'CD4', 'HPAC', 'BW200'],
+            'MAB-1.6': ['BASE', 'POPET', 'IPCP', 'PYTHIA', 'CD4', 'MAB', 'BW200'],
+            'Athena-1.6': ['BASE', 'POPET', 'IPCP', 'PYTHIA', 'CD4', 'ATHENA', 'BW200'],
+            # 3.2 GB/s (400 MTPS) - default in BASE
+            'POPET-3.2': ['BASE', 'POPET', 'BW400'],
+            'IPCP-Pythia-3.2': ['BASE', 'IPCP', 'PYTHIA', 'BW400'],
+            'Naive-3.2': ['BASE', 'POPET', 'IPCP', 'PYTHIA', 'BW400'],
+            'TLP-3.2': ['BASE', 'TLP', 'IPCP', 'PYTHIA', 'BW400'],
+            'HPAC-3.2': ['BASE', 'POPET', 'IPCP', 'PYTHIA', 'CD4', 'HPAC', 'BW400'],
+            'MAB-3.2': ['BASE', 'POPET', 'IPCP', 'PYTHIA', 'CD4', 'MAB', 'BW400'],
+            'Athena-3.2': ['BASE', 'POPET', 'IPCP', 'PYTHIA', 'CD4', 'ATHENA', 'BW400'],
+            # 6.4 GB/s (800 MTPS)
+            'POPET-6.4': ['BASE', 'POPET', 'BW800'],
+            'IPCP-Pythia-6.4': ['BASE', 'IPCP', 'PYTHIA', 'BW800'],
+            'Naive-6.4': ['BASE', 'POPET', 'IPCP', 'PYTHIA', 'BW800'],
+            'TLP-6.4': ['BASE', 'TLP', 'IPCP', 'PYTHIA', 'BW800'],
+            'HPAC-6.4': ['BASE', 'POPET', 'IPCP', 'PYTHIA', 'CD4', 'HPAC', 'BW800'],
+            'MAB-6.4': ['BASE', 'POPET', 'IPCP', 'PYTHIA', 'CD4', 'MAB', 'BW800'],
+            'Athena-6.4': ['BASE', 'POPET', 'IPCP', 'PYTHIA', 'CD4', 'ATHENA', 'BW800'],
+            # 12.8 GB/s (1600 MTPS)
+            'POPET-12.8': ['BASE', 'POPET', 'BW1600'],
+            'IPCP-Pythia-12.8': ['BASE', 'IPCP', 'PYTHIA', 'BW1600'],
+            'Naive-12.8': ['BASE', 'POPET', 'IPCP', 'PYTHIA', 'BW1600'],
+            'TLP-12.8': ['BASE', 'TLP', 'IPCP', 'PYTHIA', 'BW1600'],
+            'HPAC-12.8': ['BASE', 'POPET', 'IPCP', 'PYTHIA', 'CD4', 'HPAC', 'BW1600'],
+            'MAB-12.8': ['BASE', 'POPET', 'IPCP', 'PYTHIA', 'CD4', 'MAB', 'BW1600'],
+            'Athena-12.8': ['BASE', 'POPET', 'IPCP', 'PYTHIA', 'CD4', 'ATHENA', 'BW1600'],
+        }
+    },
+    'Fig8': {
+        'description': 'SMS + L2C',
+        'experiments': {
+            'Baseline': ['BASE'],
+            'Naive-SMS-Pythia-': ['BASE', 'SMS', 'PYTHIA'],
+            'HPAC-SMS-Pythia-': ['BASE', 'SMS', 'PYTHIA', 'CD5', 'HPAC'],
+            'MAB-SMS-Pythia-': ['BASE', 'SMS', 'PYTHIA', 'CD5', 'MAB'],
+            'Athena-SMS-Pythia-': ['BASE', 'SMS', 'PYTHIA', 'CD5', 'ATHENA'],
+        }
+    },
 }
 
 

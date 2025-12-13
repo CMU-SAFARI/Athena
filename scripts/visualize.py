@@ -9,9 +9,14 @@ import matplotlib.pyplot as plt
 import numpy as np
 import sys
 from pathlib import Path
-from typing import Optional, Dict
+from typing import Optional, Dict, List
 
 from config import EXPERIMENTS, DEFAULT_RESULTS_DIR, TRACE_DATA, WorkloadType, get_athena_home
+
+
+def is_sensitivity_study(config_type: str) -> bool:
+    """Check if the configuration is a sensitivity study."""
+    return EXPERIMENTS.get(config_type, {}).get('sensitivity_type') == 'grouped'
 
 # Display names for categories (shorter for plot labels)
 CATEGORY_DISPLAY_NAMES = {
@@ -197,12 +202,140 @@ def create_bar_plot(category_speedups: Dict[str, Dict[str, float]], config_type:
     return fig
 
 
+def calculate_sensitivity_speedups(df: pd.DataFrame, config_type: str) -> Dict[str, Dict[str, float]]:
+    """
+    Calculate speedup for sensitivity studies.
+    Returns a dict: {category: {experiment_label: geomean_speedup}}
+    
+    Supports per-category baselines via 'category_baselines' field in config.
+    If not present, falls back to a single 'Baseline' experiment.
+    """
+    config_info = EXPERIMENTS[config_type]
+    categories = config_info['categories']
+    category_suffixes = config_info['category_suffix']
+    experiment_labels = config_info['experiment_labels']
+    
+    # Check if per-category baselines are defined
+    category_baselines = config_info.get('category_baselines', None)
+    
+    # If no per-category baselines, use single global baseline
+    if category_baselines is None:
+        baseline_data_map = {
+            cat: df[df['Exp'] == 'Baseline'].set_index('Trace')['Core_0_cumulative_IPC']
+            for cat in categories
+        }
+    else:
+        # Build per-category baseline data
+        baseline_data_map = {}
+        for cat_idx, category in enumerate(categories):
+            baseline_name = category_baselines[cat_idx]
+            baseline_df = df[df['Exp'] == baseline_name]
+            if not baseline_df.empty:
+                baseline_data_map[category] = baseline_df.set_index('Trace')['Core_0_cumulative_IPC']
+            else:
+                # Fallback to empty series if baseline not found
+                baseline_data_map[category] = pd.Series(dtype=float)
+    
+    results = {}
+    
+    for cat_idx, category in enumerate(categories):
+        suffix = category_suffixes[cat_idx]
+        results[category] = {}
+        baseline_data = baseline_data_map[category]
+        
+        for exp_label in experiment_labels:
+            # Construct the full experiment name
+            exp_name = f"{exp_label}{suffix}"
+            
+            exp_data = df[df['Exp'] == exp_name]
+            if exp_data.empty:
+                results[category][exp_label] = 1.0
+                continue
+            
+            # Calculate speedup over baseline for all traces
+            speedups = []
+            for _, row in exp_data.iterrows():
+                trace = row['Trace']
+                if trace in baseline_data.index:
+                    baseline_ipc = baseline_data[trace]
+                    exp_ipc = row['Core_0_cumulative_IPC']
+                    speedup = exp_ipc / baseline_ipc
+                    speedups.append(speedup)
+            
+            # Calculate geometric mean
+            if speedups:
+                results[category][exp_label] = np.exp(np.mean(np.log(speedups)))
+            else:
+                results[category][exp_label] = 1.0
+    
+    return results
+
+
+def create_sensitivity_bar_plot(category_speedups: Dict[str, Dict[str, float]], config_type: str):
+    """
+    Create grouped bar plot for sensitivity studies.
+    X-axis: categories (e.g., 6 cycles, 18 cycles, 30 cycles)
+    Bars within each group: experiment labels (e.g., POPET, Pythia, Naive, etc.)
+    """
+    config_info = EXPERIMENTS[config_type]
+    categories = config_info['categories']
+    experiment_labels = config_info['experiment_labels']
+    
+    # Create the plot
+    fig, ax = plt.subplots(figsize=(14, 8))
+    
+    # Set up bar positions
+    x = np.arange(len(categories))
+    n_experiments = len(experiment_labels)
+    width = 0.8 / n_experiments
+    
+    # Define colors for experiments
+    colors = plt.cm.Set2(np.linspace(0, 1, n_experiments))
+    
+    # Create bars for each experiment label across categories
+    for i, exp_label in enumerate(experiment_labels):
+        values = [category_speedups[cat].get(exp_label, 1.0) for cat in categories]
+        offset = (i - n_experiments / 2 + 0.5) * width
+        bars = ax.bar(x + offset, values, width, 
+                     label=exp_label, color=colors[i], alpha=0.85, edgecolor='black', linewidth=0.5)
+        
+        # Add value labels on bars
+        for bar, val in zip(bars, values):
+            height = bar.get_height()
+            ax.annotate(f'{val:.3f}',
+                       xy=(bar.get_x() + bar.get_width() / 2, height),
+                       xytext=(0, 3),
+                       textcoords="offset points",
+                       ha='center', va='bottom', fontsize=7, rotation=90)
+    
+    # Customize the plot
+    ax.set_xlabel('Sensitivity Parameter', fontsize=12, fontweight='bold')
+    ax.set_ylabel('Geometric Mean Speedup', fontsize=12, fontweight='bold')
+    ax.set_title(f'{config_type}: {config_info["description"]}', 
+                fontsize=14, fontweight='bold')
+    ax.set_xticks(x)
+    ax.set_xticklabels(categories, fontsize=11)
+    ax.legend(bbox_to_anchor=(1.02, 1), loc='upper left', fontsize=10)
+    ax.grid(True, alpha=0.3, axis='y')
+    ax.axhline(y=1.0, color='red', linestyle='--', alpha=0.7, linewidth=1.5)
+    
+    # Set y-axis limits with some padding
+    all_values = [v for cat_data in category_speedups.values() for v in cat_data.values()]
+    if all_values:
+        y_min = min(0.9, min(all_values) - 0.05)
+        y_max = max(1.1, max(all_values) + 0.1)
+        ax.set_ylim(y_min, y_max)
+    
+    plt.tight_layout()
+    return fig
+
+
 def visualize_results(cd: str, csv_path: Optional[str] = None, output: Optional[str] = None):
     """
     Visualize experiment results for a specific experiment configuration.
     
     Args:
-        cd: Experiment configuration (Fig5a-Fig5d)
+        cd: Experiment configuration (Fig5a-Fig5d, Fig6b-Fig6d)
         csv_path: Path to CSV file with results (default: $ATHENA_HOME/experiments/results/<exp>.csv)
         output: Path to save the plot (default: $ATHENA_HOME/experiments/results/<exp>.png)
     """
@@ -244,32 +377,60 @@ def visualize_results(cd: str, csv_path: Optional[str] = None, output: Optional[
     successful_traces = df['Trace'].nunique()
     print(f"Found {successful_traces} successful traces for {cd}")
     
-    # Calculate speedups by category (using full dataset for baseline)
-    print("Calculating speedups by category...")
-    category_speedups = calculate_category_speedups(df_full, cd)
-    
-    if not category_speedups:
-        print("No speedup data calculated. Check if experiments are complete.")
-        sys.exit(1)
-    
-    # Create and display plot
-    print("Creating visualization...")
-    fig = create_bar_plot(category_speedups, cd)
-    
-    # Save plot
-    fig.savefig(output, dpi=300, bbox_inches='tight')
-    print(f"Plot saved to {output}")
-    
-    # Print summary statistics
-    print(f"\nSummary for {cd} ({EXPERIMENTS[cd]['description']}):")
-    print("=" * 60)
-    
-    for exp, speeds in category_speedups.items():
-        print(f"\n{exp}:")
-        for cat, speedup in speeds.items():
-            # Use display name for category
-            cat_name = CATEGORY_DISPLAY_NAMES.get(cat, str(cat))
-            print(f"  {cat_name}: {speedup:.3f}x")
+    # Check if this is a sensitivity study
+    if is_sensitivity_study(cd):
+        # Sensitivity study: group by parameter categories
+        print("Calculating sensitivity study speedups...")
+        category_speedups = calculate_sensitivity_speedups(df_full, cd)
+        
+        if not category_speedups:
+            print("No speedup data calculated. Check if experiments are complete.")
+            sys.exit(1)
+        
+        # Create sensitivity plot
+        print("Creating sensitivity study visualization...")
+        fig = create_sensitivity_bar_plot(category_speedups, cd)
+        
+        # Save plot
+        fig.savefig(output, dpi=300, bbox_inches='tight')
+        print(f"Plot saved to {output}")
+        
+        # Print summary statistics for sensitivity study
+        config_info = EXPERIMENTS[cd]
+        print(f"\nSummary for {cd} ({config_info['description']}):")
+        print("=" * 60)
+        
+        for category, exp_data in category_speedups.items():
+            print(f"\n{category}:")
+            for exp_label, speedup in exp_data.items():
+                print(f"  {exp_label}: {speedup:.3f}x")
+    else:
+        # Regular experiment: group by workload categories
+        print("Calculating speedups by category...")
+        category_speedups = calculate_category_speedups(df_full, cd)
+        
+        if not category_speedups:
+            print("No speedup data calculated. Check if experiments are complete.")
+            sys.exit(1)
+        
+        # Create and display plot
+        print("Creating visualization...")
+        fig = create_bar_plot(category_speedups, cd)
+        
+        # Save plot
+        fig.savefig(output, dpi=300, bbox_inches='tight')
+        print(f"Plot saved to {output}")
+        
+        # Print summary statistics
+        print(f"\nSummary for {cd} ({EXPERIMENTS[cd]['description']}):")
+        print("=" * 60)
+        
+        for exp, speeds in category_speedups.items():
+            print(f"\n{exp}:")
+            for cat, speedup in speeds.items():
+                # Use display name for category
+                cat_name = CATEGORY_DISPLAY_NAMES.get(cat, str(cat))
+                print(f"  {cat_name}: {speedup:.3f}x")
 
 
 def main():
@@ -277,8 +438,8 @@ def main():
     import argparse
     
     parser = argparse.ArgumentParser(description='Visualize HPCA experiment performance data')
-    parser.add_argument('cd', choices=['Fig5a', 'Fig5b', 'Fig5c', 'Fig5d'],
-                       help='Experiment configuration to visualize')
+    parser.add_argument('cd', choices=list(EXPERIMENTS.keys()),
+                       help='Experiment configuration to visualize (Fig5a-Fig5d for main results, Fig6b-Fig6d for sensitivity studies)')
     parser.add_argument('--csv', 
                        help='Path to CSV file (default: $ATHENA_HOME/experiments/results/<CD>.csv)')
     parser.add_argument('--output', '-o',

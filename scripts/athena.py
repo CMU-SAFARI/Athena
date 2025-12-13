@@ -135,8 +135,8 @@ Examples:
                            help='Visualize results mode')
     
     # Experiment selection (required for all modes)
-    parser.add_argument('cd', choices=['Fig5a', 'Fig5b', 'Fig5c', 'Fig5d'],
-                       help='Experiment configuration to use (Fig5a-Fig5d)')
+    parser.add_argument('cd', choices=['Fig5a', 'Fig5b', 'Fig5c', 'Fig5d', 'Fig6b', 'Fig6c', 'Fig6d', 'Fig7a', 'Fig7b', 'Fig8'],
+                       help='Experiment configuration to use (Fig5a-Fig5d, Fig6b-Fig6d, Fig7a-Fig7b, Fig8)')
     
     # Launch/Relaunch arguments
     parser.add_argument('--exe', default='$ATHENA_HOME/bin/champsim',
