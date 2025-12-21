@@ -37,7 +37,8 @@ def launch_experiments(args):
             partition=args.partition,
             hostname=args.hostname,
             extra=args.extra,
-            workload_types=workload_types
+            workload_types=workload_types,
+            dry_run=args.dry_run
         )
     except Exception as e:
         print(f"Error generating jobs: {e}", file=sys.stderr)

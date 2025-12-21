@@ -168,7 +168,8 @@ class JobGenerator:
 def generate_jobs(exe: str, cd: str,
                   ncores: int = DEFAULT_NCORES, partition: str = DEFAULT_PARTITION,
                   hostname: str = DEFAULT_HOSTNAME, extra: Optional[str] = None,
-                  workload_types: Optional[List[str]] = None) -> str:
+                  workload_types: Optional[List[str]] = None,
+                  dry_run: bool = False) -> str:
     """
     Submit slurm jobs for specified Cache Design.
     
@@ -205,20 +206,30 @@ def generate_jobs(exe: str, cd: str,
         output_dir=output_dir,
         workload_types=workload_types
     )
-    
-    # Submit jobs directly
-    original_dir = os.getcwd()
-    os.chdir(output_dir)
-    print(f"Changed to directory: {output_dir}")
-    
+
+    # Generate the commands
     commands = generator.generate_sbatch_commands()
-    print(f"Submitting {len(commands)} jobs...")
     
-    for i, cmd in enumerate(commands, 1):
-        print(f"[{i}/{len(commands)}] {cmd}")
-        subprocess.run(cmd, shell=True)
+    # If dry running, only print the commands
+    if dry_run:
+        for i, cmd in enumerate(commands, 1):
+            print(f"  [{i}/{len(commands)}] {cmd}")
+        print(f"\n{'='*60}")
+        print(f"Total: {len(commands)} experiments")
     
-    os.chdir(original_dir)
-    print(f"\nSubmitted {len(commands)} jobs to slurm.")
-    print(f"Output files will be in: {output_dir}")
+    else:
+        # Submit jobs directly
+        original_dir = os.getcwd()
+        os.chdir(output_dir)
+        print(f"Changed to directory: {output_dir}")
+        
+        print(f"Submitting {len(commands)} jobs...")
+        for i, cmd in enumerate(commands, 1):
+            print(f"[{i}/{len(commands)}] {cmd}")
+            subprocess.run(cmd, shell=True)
+        
+        os.chdir(original_dir)
+        print(f"\nSubmitted {len(commands)} jobs to slurm.")
+        print(f"Output files will be in: {output_dir}")
+
     return '\n'.join(commands)
