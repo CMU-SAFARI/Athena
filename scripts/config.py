@@ -327,7 +327,7 @@ EXPERIMENTS = {
         'sensitivity_type': 'grouped',
         'categories': ['Pythia', 'SPP+PPF', 'MLOP', 'SMS'],
         'category_suffix': ['-Pythia', '-SPP', '-MLOP', '-SMS'],
-        'experiment_labels': ['POPET', 'L2C', 'Naive', 'MAB', 'Athena'],
+        'experiment_labels': ['Athena'],
         'experiments': {
             'Baseline': ['BASE'],
             # Pythia
@@ -345,7 +345,7 @@ EXPERIMENTS = {
         'sensitivity_type': 'grouped',
         'categories': ['6 cycles', '18 cycles', '30 cycles'],
         'category_suffix': ['-6', '-18', '-30'],
-        'experiment_labels': ['POPET', 'Pythia', 'Naive', 'HPAC', 'MAB', 'Athena'],
+        'experiment_labels': ['Athena'],
         'experiments': {
             'Baseline': ['BASE'],
             # 6 cycles (default latency)
@@ -361,7 +361,7 @@ EXPERIMENTS = {
         'sensitivity_type': 'grouped',
         'categories': ['POPET', 'HMP', 'TTP'],
         'category_suffix': ['-POPET', '-HMP', '-TTP'],
-        'experiment_labels': ['OCP', 'Pythia', 'Naive', 'HPAC', 'MAB', 'Athena'],
+        'experiment_labels': ['Athena'],
         'experiments': {
             'Baseline': ['BASE'],
             # POPET
@@ -377,7 +377,7 @@ EXPERIMENTS = {
         'sensitivity_type': 'grouped',
         'categories': ['IPCP', 'Berti'],
         'category_suffix': ['-IPCP', '-Berti'],
-        'experiment_labels': ['POPET', 'L1D', 'Naive', 'TLP', 'HPAC', 'MAB', 'Athena'],
+        'experiment_labels': ['Athena'],
         'experiments': {
             'Baseline': ['BASE'],
             # IPCP
@@ -392,7 +392,7 @@ EXPERIMENTS = {
         'categories': ['1.6 GB/s', '3.2 GB/s', '6.4 GB/s', '12.8 GB/s'],
         'category_suffix': ['-1.6', '-3.2', '-6.4', '-12.8'],
         'category_baselines': ['Baseline-1.6', 'Baseline-3.2', 'Baseline-6.4', 'Baseline-12.8'],
-        'experiment_labels': ['POPET', 'IPCP-Pythia', 'Naive', 'TLP', 'HPAC', 'MAB', 'Athena'],
+        'experiment_labels': ['Athena'],
         'experiments': {
             # Per-bandwidth baselines
             'Baseline-1.6': ['BASE', 'BW200'],
