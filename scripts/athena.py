@@ -37,7 +37,8 @@ def launch_experiments(args):
             partition=args.partition,
             hostname=args.hostname,
             extra=args.extra,
-            workload_types=workload_types
+            workload_types=workload_types,
+            dry_run=args.dry_run
         )
     except Exception as e:
         print(f"Error generating jobs: {e}", file=sys.stderr)
@@ -135,7 +136,8 @@ Examples:
                            help='Visualize results mode')
     
     # Experiment selection (required for all modes)
-    parser.add_argument('cd', choices=['Fig5a', 'Fig5b', 'Fig5c', 'Fig5d', 'Fig6b', 'Fig6c', 'Fig6d', 'Fig7a', 'Fig7b', 'Fig8'],
+    parser.add_argument('cd', choices=['Fig5a', 'Fig5b', 'Fig5c', 'Fig5d', 'Fig6b', 'Fig6c', 'Fig6d', 'Fig7a', 'Fig7b', 'Fig8',
+                                       'Fig5a-lite', 'Fig5b-lite', 'Fig5c-lite', 'Fig5d-lite', 'Fig6b-lite', 'Fig6c-lite', 'Fig6d-lite', 'Fig7a-lite', 'Fig7b-lite', 'Fig8-lite'],
                        help='Experiment configuration to use (Fig5a-Fig5d, Fig6b-Fig6d, Fig7a-Fig7b, Fig8)')
     
     # Launch/Relaunch arguments
@@ -154,7 +156,7 @@ Examples:
     
     # Relaunch-specific arguments
     parser.add_argument('--dry-run', dest='dry_run', action='store_true',
-                       help='Print relaunch commands without executing (relaunch mode only)')
+                       help='Print job commands without executing (valid in launch and relaunch mode only)')
     
     # Visualization-specific arguments
     parser.add_argument('--csv', 
