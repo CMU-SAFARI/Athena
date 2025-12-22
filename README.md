@@ -140,7 +140,7 @@ The full evaluation uses **100 workload traces** across four benchmark suites:
 
 ### Using the Athena Tool
 
-Before launching the experiments, please make sure to update `DEFAULT_NCORES`, `DEFAULT_PARTITION`, `DEFAULT_HOSTNAME`, `DEFAULT_SLURM_USERNAME` and other Slurm-related settings in `$ATHENA_HOME/scripts/config.py`
+Before launching the experiments, please make sure to update `DEFAULT_NCORES`, `DEFAULT_PARTITION`, `DEFAULT_HOSTNAME`, and other Slurm-related settings in `$ATHENA_HOME/scripts/config.py`
 
 The `athena.py` script provides a unified interface for all experiment operations.
 

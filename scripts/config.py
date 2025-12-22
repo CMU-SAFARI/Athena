@@ -10,7 +10,6 @@ from typing import Dict, List
 DEFAULT_NCORES = 1
 DEFAULT_PARTITION = "cpu_part"
 DEFAULT_HOSTNAME = "kratos"
-DEFAULT_SLURM_USERNAME = "zhlang"
 
 # Experiment variable definitions
 EXP_VARIABLES = {
