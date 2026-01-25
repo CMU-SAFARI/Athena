@@ -56,7 +56,7 @@ EXP_VARIABLES = {
 
 # Experiment configurations (merges experiments with their variable definitions)
 EXPERIMENTS = {
-    'Fig5a': {
+    'Fig7': {
         'description': 'OCP + L2C',
         'experiments': {
             'Baseline': ['BASE'],
@@ -68,7 +68,7 @@ EXPERIMENTS = {
             'Athena-POPET-Pythia-': ['BASE', 'POPET', 'PYTHIA', 'CD1', 'ATHENA'],
         }
     },
-    'Fig5b': {
+    'Fig9': {
         'description': 'OCP + L1D',
         'experiments': {
             'Baseline': ['BASE'],
@@ -81,7 +81,7 @@ EXPERIMENTS = {
             'Athena-POPET-IPCP-': ['BASE', 'POPET', 'IPCP', 'CD2', 'ATHENA'],
         }
     },
-    'Fig5c': {
+    'Fig10': {
         'description': 'OCP + 2 L2C',
         'experiments': {
             'Baseline': ['BASE'],
@@ -93,7 +93,7 @@ EXPERIMENTS = {
             'Athena-POPET-SMS-Pythia-': ['BASE', 'POPET', 'SMS', 'PYTHIA', 'CD3', 'ATHENA'],
         }
     },
-    'Fig5d': {
+    'Fig11': {
         'description': 'OCP + L1D + L2C',
         'experiments': {
             'Baseline': ['BASE'],
@@ -108,7 +108,7 @@ EXPERIMENTS = {
     },
     # Sensitivity Studies (grouped by parameter, not workload type)
 
-    'Fig6b': {
+    'Fig12a': {
         'description': 'L2C Prefetcher Type Sensitivity',
         'sensitivity_type': 'grouped',
         'categories': ['Pythia', 'SPP+PPF', 'MLOP', 'SMS'],
@@ -146,7 +146,7 @@ EXPERIMENTS = {
             'Athena-SMS': ['BASE', 'POPET', 'SMS', 'CD1', 'ATHENA'],
         }
     },
-    'Fig6c': {
+    'Fig12c': {
         'description': 'OCP Request Latency Sensitivity',
         'sensitivity_type': 'grouped',
         'categories': ['6 cycles', '18 cycles', '30 cycles'],
@@ -177,7 +177,7 @@ EXPERIMENTS = {
             'Athena-30': ['BASE', 'POPET', 'PYTHIA', 'CD1', 'ATHENA', 'LAT30'],
         }
     },
-    'Fig6d': {
+    'Fig12b': {
         'description': 'OCP Type Sensitivity',
         'sensitivity_type': 'grouped',
         'categories': ['POPET', 'HMP', 'TTP'],
@@ -208,7 +208,7 @@ EXPERIMENTS = {
             'Athena-TTP': ['BASE', 'TTP', 'PYTHIA', 'CD1', 'ATHENA'],
         }
     },
-    'Fig7a': {
+    'Fig13': {
         'description': 'L1D Prefetcher Type Sensitivity (CD4)',
         'sensitivity_type': 'grouped',
         'categories': ['IPCP', 'Berti'],
@@ -234,7 +234,7 @@ EXPERIMENTS = {
             'Athena-Berti': ['BASE', 'POPET', 'BERTI', 'PYTHIA', 'CD4', 'ATHENA'],
         }
     },
-    'Fig7b': {
+    'Fig14': {
         'description': 'Memory Bandwidth Sensitivity (CD4)',
         'sensitivity_type': 'grouped',
         'categories': ['1.6 GB/s', '3.2 GB/s', '6.4 GB/s', '12.8 GB/s'],
@@ -281,7 +281,7 @@ EXPERIMENTS = {
             'Athena-12.8': ['BASE', 'POPET', 'IPCP', 'PYTHIA', 'CD4', 'ATHENA', 'BW1600'],
         }
     },
-    'Fig8': {
+    'Fig19': {
         'description': 'SMS + L2C',
         'experiments': {
             'Baseline': ['BASE'],
@@ -291,28 +291,28 @@ EXPERIMENTS = {
             'Athena-SMS-Pythia-': ['BASE', 'SMS', 'PYTHIA', 'CD5', 'ATHENA'],
         }
     },
-    'Fig5a-lite': {
+    'Fig7-lite': {
         'description': 'OCP + L2C',
         'experiments': {
             'Baseline': ['BASE'],
             'Athena-POPET-Pythia-': ['BASE', 'POPET', 'PYTHIA', 'CD1', 'ATHENA'],
         }
     },
-    'Fig5b-lite': {
+    'Fig9-lite': {
         'description': 'OCP + L1D',
         'experiments': {
             'Baseline': ['BASE'],
             'Athena-POPET-IPCP-': ['BASE', 'POPET', 'IPCP', 'CD2', 'ATHENA'],
         }
     },
-    'Fig5c-lite': {
+    'Fig10-lite': {
         'description': 'OCP + 2 L2C',
         'experiments': {
             'Baseline': ['BASE'],
             'Athena-POPET-SMS-Pythia-': ['BASE', 'POPET', 'SMS', 'PYTHIA', 'CD3', 'ATHENA'],
         }
     },
-    'Fig5d-lite': {
+    'Fig11-lite': {
         'description': 'OCP + L1D + L2C',
         'experiments': {
             'Baseline': ['BASE'],
@@ -321,7 +321,7 @@ EXPERIMENTS = {
     },
     # Sensitivity Studies (grouped by parameter, not workload type)
 
-    'Fig6b-lite': {
+    'Fig12a-lite': {
         'description': 'L2C Prefetcher Type Sensitivity',
         'sensitivity_type': 'grouped',
         'categories': ['Pythia', 'SPP+PPF', 'MLOP', 'SMS'],
@@ -339,7 +339,7 @@ EXPERIMENTS = {
             'Athena-SMS': ['BASE', 'POPET', 'SMS', 'CD1', 'ATHENA'],
         }
     },
-    'Fig6c-lite': {
+    'Fig12c-lite': {
         'description': 'OCP Request Latency Sensitivity',
         'sensitivity_type': 'grouped',
         'categories': ['6 cycles', '18 cycles', '30 cycles'],
@@ -355,7 +355,7 @@ EXPERIMENTS = {
             'Athena-30': ['BASE', 'POPET', 'PYTHIA', 'CD1', 'ATHENA', 'LAT30'],
         }
     },
-    'Fig6d-lite': {
+    'Fig12b-lite': {
         'description': 'OCP Type Sensitivity',
         'sensitivity_type': 'grouped',
         'categories': ['POPET', 'HMP', 'TTP'],
@@ -371,7 +371,7 @@ EXPERIMENTS = {
             'Athena-TTP': ['BASE', 'TTP', 'PYTHIA', 'CD1', 'ATHENA'],
         }
     },
-    'Fig7a-lite': {
+    'Fig13-lite': {
         'description': 'L1D Prefetcher Type Sensitivity (CD4)',
         'sensitivity_type': 'grouped',
         'categories': ['IPCP', 'Berti'],
@@ -385,7 +385,7 @@ EXPERIMENTS = {
             'Athena-Berti': ['BASE', 'POPET', 'BERTI', 'PYTHIA', 'CD4', 'ATHENA'],
         }
     },
-    'Fig7b-lite': {
+    'Fig14-lite': {
         'description': 'Memory Bandwidth Sensitivity (CD4)',
         'sensitivity_type': 'grouped',
         'categories': ['1.6 GB/s', '3.2 GB/s', '6.4 GB/s', '12.8 GB/s'],
@@ -408,7 +408,7 @@ EXPERIMENTS = {
             'Athena-12.8': ['BASE', 'POPET', 'IPCP', 'PYTHIA', 'CD4', 'ATHENA', 'BW1600'],
         }
     },
-    'Fig8-lite': {
+    'Fig19-lite': {
         'description': 'SMS + L2C',
         'experiments': {
             'Baseline': ['BASE'],

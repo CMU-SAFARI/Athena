@@ -97,11 +97,11 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  # Launch Fig5a experiments (submits to $ATHENA_HOME/experiments/Fig5a/)
-  python athena.py -L Fig5a --exe $ATHENA_HOME/bin/champsim
+  # Launch Fig7 experiments (submits to $ATHENA_HOME/experiments/Fig7/)
+  python athena.py -L Fig7 --exe $ATHENA_HOME/bin/champsim
 
-  # Launch Fig5a experiments filtered by workload type
-  python athena.py -L Fig5a --exe $ATHENA_HOME/bin/champsim --workload-types SPEC PARSEC
+  # Launch Fig7 experiments filtered by workload type
+  python athena.py -L Fig7 --exe $ATHENA_HOME/bin/champsim --workload-types SPEC PARSEC
 
   # Summarize results (output to $ATHENA_HOME/experiments/results/Fig5c.csv)
   python athena.py -S Fig5c
@@ -115,12 +115,12 @@ Examples:
   # Dry-run relaunch (show commands without executing)
   python athena.py -R Fig5d --dry-run
 
-  # Visualize Fig5a results (reads $ATHENA_HOME/experiments/results/Fig5a.csv,
-  #                          outputs $ATHENA_HOME/experiments/results/Fig5a.png)
-  python athena.py -V Fig5a
+  # Visualize Fig7 results (reads $ATHENA_HOME/experiments/results/Fig7.csv,
+  #                          outputs $ATHENA_HOME/experiments/results/Fig7.png)
+  python athena.py -V Fig7
   
   # Visualize with custom CSV input
-  python athena.py -V Fig5a --csv /path/to/results.csv
+  python athena.py -V Fig7 --csv /path/to/results.csv
         """
     )
     
@@ -136,9 +136,9 @@ Examples:
                            help='Visualize results mode')
     
     # Experiment selection (required for all modes)
-    parser.add_argument('cd', choices=['Fig5a', 'Fig5b', 'Fig5c', 'Fig5d', 'Fig6b', 'Fig6c', 'Fig6d', 'Fig7a', 'Fig7b', 'Fig8',
-                                       'Fig5a-lite', 'Fig5b-lite', 'Fig5c-lite', 'Fig5d-lite', 'Fig6b-lite', 'Fig6c-lite', 'Fig6d-lite', 'Fig7a-lite', 'Fig7b-lite', 'Fig8-lite'],
-                       help='Experiment configuration to use (Fig5a-Fig5d, Fig6b-Fig6d, Fig7a-Fig7b, Fig8)')
+    parser.add_argument('cd', choices=['Fig7','Fig9','Fig10','Fig11','Fig12a','Fig12c','Fig12b','Fig13','Fig14','Fig19',
+                                       'Fig7-lite','Fig9-lite','Fig10-lite','Fig11-lite','Fig12a-lite','Fig12c-lite','Fig12b-lite','Fig13-lite','Fig14-lite','Fig19-lite'],
+                       help='Experiment configuration to use')
     
     # Launch/Relaunch arguments
     parser.add_argument('--exe', default='$ATHENA_HOME/bin/champsim',
