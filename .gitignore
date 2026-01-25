@@ -6,5 +6,6 @@ bin/
 obj/
 .vscode/
 .cache/
+.DS_Store
 
 og_exp/

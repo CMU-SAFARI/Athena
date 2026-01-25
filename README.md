@@ -1,23 +1,57 @@
-# Athena: Synergizing Data Prefetching and Off-Chip Prediction via Online Reinforcement Learning
+<p align="center">
+  <picture>
+  	<source media="(prefers-color-scheme: dark)" srcset="logo/light.png">
+  	<source media="(prefers-color-scheme: light)" srcset="logo/dark.png">
+  <img alt="athena-logo" src="logo/dark.png" width="400">
+</picture>
+  <h3 align="center">Synergizing Data Prefetching and Off-Chip Prediction <br> via Online Reinforcement Learning
+  </h3>
+</p>
 
-This artifact contains the implementation and evaluation infrastructure for **Athena**, a reinforcement learning-based technique for synergizing data prefetching and off-chip prediction. The artifact is built on top of ChampSim, a trace-driven CPU simulator.
+<p align="center">
+    <a href="https://github.com/CMU-SAFARI/Athena/blob/master/LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-yellow.svg"></a>
+    <a href="https://github.com/CMU-SAFARI/Athena/releases"><img alt="GitHub release" src="https://img.shields.io/github/release/CMU-SAFARI/Athena"></a>
+    <a href="https://arxiv.org/abs/XXXX.YYYYY"><img src="https://img.shields.io/badge/cs.AR-XXXX.YYYYY-b31b1b?logo=arxiv&logoColor=red" alt="DOI"></a>
+</p>
 
----
+<!-- This artifact contains the implementation and evaluation infrastructure for **Athena**, a reinforcement learning-based technique for synergizing data prefetching and off-chip prediction. The artifact is built on top of ChampSim, a trace-driven CPU simulator. -->
 
 ## Table of Contents
 
-1. [Overview](#overview)
-2. [Directory Structure](#directory-structure)
-3. [Building the Simulator](#building-the-simulator)
-4. [Obtaining Traces](#obtaining-traces)
-5. [Running Experiments](#running-experiments)
-6. [Understanding Results](#understanding-results)
+- [Table of Contents](#table-of-contents)
+- [What is Athena?](#what-is-athena)
+- [Repository Overview](#repository-overview)
+- [Citation](#citation)
+- [Building the Simulator](#building-the-simulator)
+  - [0. Prerequisite](#0-prerequisite)
+  - [1. Clone the repository](#1-clone-the-repository)
+  - [2. Set up the environment](#2-set-up-the-environment)
+  - [3. Build the simulator](#3-build-the-simulator)
+  - [4. Verify the build](#4-verify-the-build)
+- [Obtaining Traces](#obtaining-traces)
+  - [Download Instructions](#download-instructions)
+  - [Verify Trace Integrity](#verify-trace-integrity)
+  - [Trace Count](#trace-count)
+- [Running Experiments](#running-experiments)
+  - [Using the Athena Tool](#using-the-athena-tool)
+  - [Example: Reproducing Figure 7](#example-reproducing-figure-7)
+- [Understanding Results](#understanding-results)
+  - [Experiment Output](#experiment-output)
+  - [Aggregated CSV File](#aggregated-csv-file)
+  - [Key Metrics](#key-metrics)
+- [Brief Code Walkthrough](#brief-code-walkthrough)
+- [License](#license)
+- [Contact](#contact)
 
----
 
-## Overview
+## What is Athena?
 
-The artifact supports:
+Athena is a reinforcement learning (RL) based policy to coordinate off-chip predictor (OCP) with multiple data prefetchers employed at various cache levels of a high-performance processor. Athena operates in epoch of workload execution (i.e., N committed instructions). At the end of an epoch, Athena observes multiple system-level features (e.g., prefetcher and/or OCP accuracy, main memory bandwidth usage) and takes a coordination action (i.e., enabling the OCP and/or prefetcher, and adjusting prefetcher aggressiveness). It also receives a numerical reward from the processor subsystem at the end of every epoch that measures change in multiple system-level metrics (e.g., execution cycles, LLC miss latency) and use it to autonomously train the coordination policy. 
+
+
+## Repository Overview
+
+The repository supports:
 
 - **Multiple data prefetchers and off-chip predictors:**
   - L1D Prefetchers: IPCP, Berti
@@ -31,9 +65,195 @@ The artifact supports:
   - MAB (Micro-Armed Bandit)
   - **Athena** (our proposed learning-based coordination)
 
----
+## Citation
 
-## Directory Structure
+Athena was published and presented in HPCA in February 2026, at Sydney, Australia.
+
+> _Rahul Bera, Zhenrong Lang, Caroline Hengartner, Konstantinos Kanellopoulos, Rakesh Kumar, Mohammad Sadrosadati, and Onur Mutlu, "[Athena: Synergizing Data Prefetching and Off-Chip Prediction via Online Reinforcement Learning]()", In Proceedings of the 32nd International Symposium on High-Performance Computer Architecture (HPCA), 2026_
+
+If you find this repository useful, please cite the paper using:
+
+```
+@inproceedings{athena,
+  title           = {{Athena: Synergizing Data Prefetching and Off-Chip Prediction via Online Reinforcement Learning}},
+  author          = {Bera, Rahul and Lang, Zhenrong and Hengartner, Caroline and Kanellopoulos, Konstantinos and Kumar, Rakesh and Sadrosadati, Mohammad and Mutlu, Onur},
+  booktitle       = {HPCA},
+  year            = {2026}
+}
+```
+
+
+## Building the Simulator
+
+### 0. Prerequisite
+
+This repository has been tested with the following system configuration:
+- GNU Make 4.3
+- GCC/G++ 11.3.0
+- Python 3.12.5
+- xz 5.8.1
+- gzip 1.10
+- curl 7.81.0
+- slur-wlm 21.08.5 
+
+### 1. Clone the repository
+```bash
+git clone https://github.com/CMU-SAFARI/Athena.git
+cd Athena
+```
+
+### 2. Set up the environment
+```bash
+source setvars.sh
+```
+This sets the `ATHENA_HOME` environment variable required by all scripts.
+
+### 3. Build the simulator
+```bash
+make clean
+make -j$(nproc)
+```
+
+### 4. Verify the build
+```bash
+ls bin/champsim
+# Should show: bin/champsim
+```
+
+The build produces a single binary `bin/champsim` that supports all prefetcher and off-chip predictor configurations via command-line arguments.
+
+
+## Obtaining Traces
+
+Reproducing the results from the paper requires downloading the workload traces as mentioned below. However, this repository is fully compatible with any ChampSim traces.
+
+### Download Instructions
+
+1. Download the workload traces 
+```bash
+curl -L "https://zenodo.org/api/records/17850673/files-archive" -o download.zip
+```
+2. Unzip the workload traces
+```bash
+mkdir traces
+unzip download.zip -d $ATHENA_HOME/traces
+```
+
+
+### Verify Trace Integrity
+```bash
+mv checksum.txt $ATHENA_HOME/traces
+cd $ATHENA_HOME/traces
+sha256sum -c checksum.txt
+```
+
+### Trace Count
+The full evaluation uses **100 workload traces** across four benchmark suites:
+- SPEC: 49 traces
+- PARSEC: 13 traces
+- LIGRA: 13 traces
+- CVP: 25 traces
+
+
+## Running Experiments
+
+### Using the Athena Tool
+
+Before launching the experiments, please make sure to update `DEFAULT_NCORES`, `DEFAULT_PARTITION`, `DEFAULT_HOSTNAME`, and other Slurm-related settings in `$ATHENA_HOME/scripts/config.py`
+
+The `athena.py` script provides a simple push-button interface to reproduce major results from the paper. The script should be used as follows:
+
+```bash
+
+cd $ATHENA_HOME/scripts
+
+# Launch experiments (requires Slurm cluster)
+python athena.py -L <FigureID> 
+# Summarize results from simulation outputs
+python athena.py -S <FigureID>
+# Relaunch failed experiments
+python athena.py -R <FigureID>
+# Visualize results
+python athena.py -V <FigureID>
+```
+
+The FigureID can take any value from the following list. Each ID corresponds to the respective figure in the paper.
+
+| FigureID | Description |
+|--------|-------------|
+| Fig7 | Speedup in cache design 1 (CD1) with one OCP and one prefetcher at L2C |
+| Fig9 | Speedup in CD2 with one OCP and one prefetcher at L1D |
+| Fig10 | Speedup in CD3 with one OCP and two prefetchers at L2C |
+| Fig11 | Speedup in CD4 with one OCP and one prefetcher each at L1D and L2C |
+| Fig12a | Performance sensitivity to L2C prefetcher in CD1 |
+| Fig12b | Performance sensitivity to OCP in CD1 |
+| Fig12c | Performance sensitivity to OCP request issue latency in CD1 |
+| Fig13 | Performance sensitivity to L1D prefetcher in CD4 |
+| Fig14 | Performance sensitivity to main memory bandwidth in CD4 |
+| Fig19 | Speedup in coordinating multiple prefetchers at L2C, without any OCP |
+
+> Note that: each FigureID has a corresponding "lite" version (e.g., Fig7-lite) that launches experiment needed to measure only Athena's benefit, not other competitive mechanisms. The lite versions can be used to significantly reduce number of experiments yet reproducing Athena's results.
+
+### Example: Reproducing Figure 7
+
+```bash
+# 1. Set environment
+source setvars.sh
+
+# 2. Launch experiments (on Slurm cluster)
+cd $ATHENA_HOME/scripts
+python athena.py -L Fig7 
+
+# 3. Wait for jobs to complete (check with squeue)
+# Each trace-experiment combination takes ~3 hours
+
+# 4. Summarize results
+python athena.py -S Fig7
+
+# 5. Relaunch experiments, if needed (and summarize again)
+python athena.py -R Fig7
+python athena.py -S Fig7
+
+# 6. Visualize
+python athena.py -V Fig7
+```
+
+## Understanding Results
+
+### Experiment Output
+
+Simulation outputs are stored in `experiments/<Figure>/`:
+- `<trace>_<experiment>.out` - Simulation statistics
+- `<trace>_<experiment>.err` - Error/debug output
+
+### Aggregated CSV File
+
+Aggregated results in `experiments/results/<Figure>.csv`:
+
+| Column | Description |
+|--------|-------------|
+| Trace | Workload trace name |
+| Exp | Experiment configuration name |
+| Core_0_cumulative_IPC | Instructions Per Cycle (main metric) |
+| Filter | 1 if all experiments for this trace completed |
+
+### Key Metrics
+
+The primary metric is **IPC Speedup** over baseline (no prefetching or OCP):
+```
+Speedup = IPC_experiment / IPC_baseline
+```
+
+Results are aggregated using **geometric mean** across traces, grouped by:
+- Workload type (SPEC, PARSEC, LIGRA, CVP)
+- Prefetcher-sensitivity (adverse vs. friendly)
+- Overall
+
+## Brief Code Walkthrough
+
+> Athena was code-named Oogway (named after the [all-knowing grand master](https://kungfupanda.fandom.com/wiki/Oogway) from Kung Fu Panda). Hence any mention of Oogway anywhere in the code inadvertently means Athena.
+
+This repository is organized as follows:
 
 ```
 oogway/
@@ -70,160 +290,15 @@ oogway/
 └── wrapper.sh              # Job wrapper for Slurm
 ```
 
----
+- All the necessary source files for Athena can be found inside `inc/` and `src/` directories.
+- Athena's default configuration parameters are defined in `config/oogway_dev.ini`.
+- `Oogway::train_and_take_action()` is the high-level entry function to Athena that (1) takes a coordination action and (2) trains the RL model at the end of every execution epoch. It gets called by the `ooo_cpu::retire_rob()`, which captures the current system state (e.g., main memory bandwidth usage, OCP and prefetchers' accuracy, cache pollution, etc.) and pass it to Athena. Athena takes this state, (1) computes the reward based on all the system-level metrics it has observed during the epoch (i.e., cycle count, LLC load miss latency, mispredicted branches, etc.), (2) makes the decision for the next epoch, and (3) uses the computed reward to train the RL model.
+- The RL model is defined in `inc/learning_engine_hashed.h` and `src/learning_engine_hashed.cc`.
 
-## Building the Simulator
+## License
 
+Distributed under the MIT License. See `LICENSE` for more information.
 
-### 1. Clone the repository
-```bash
-git clone https://github.com/CMU-SAFARI/Athena.git
-cd Athena
-```
+## Contact
 
-### 2. Set up the environment
-```bash
-source setvars.sh
-```
-This sets the `ATHENA_HOME` environment variable required by all scripts.
-
-### 3. Build the simulator
-```bash
-make clean
-make -j$(nproc)
-```
-
-### 4. Verify the build
-```bash
-ls bin/champsim
-# Should show: bin/champsim
-```
-
-The build produces a single binary `bin/champsim` that supports all prefetcher and off-chip predictor configurations via command-line arguments.
-
----
-
-## Obtaining Traces
-
-The artifact requires workload traces to run simulations. Traces are **not included** due to size (~30 GB total).
-
-### Download Instructions
-
-1. Download the workload traces 
-```bash
-curl -L "https://zenodo.org/api/records/17850673/files-archive" -o download.zip
-```
-2. Unzip the workload traces
-```bash
-mkdir traces
-unzip download.zip -d $ATHENA_HOME/traces
-```
-
-
-### Verify Trace Integrity
-```bash
-mv checksum.txt $ATHENA_HOME/traces
-cd $ATHENA_HOME/traces
-sha256sum -c checksum.txt
-```
-
-### Trace Count
-The full evaluation uses **100 workload traces** across four benchmark suites:
-- SPEC: 49 traces
-- PARSEC: 13 traces
-- LIGRA: 13 traces
-- CVP: 25 traces
-
----
-
-## Running Experiments
-
-### Using the Athena Tool
-
-Before launching the experiments, please make sure to update `DEFAULT_NCORES`, `DEFAULT_PARTITION`, `DEFAULT_HOSTNAME`, and other Slurm-related settings in `$ATHENA_HOME/scripts/config.py`
-
-The `athena.py` script provides a unified interface for all experiment operations.
-
-```bash
-
-cd $ATHENA_HOME/scripts
-
-# Launch experiments (requires Slurm cluster)
-python athena.py -L <Figure> 
-# Summarize results from simulation outputs
-python athena.py -S <Figure>
-# Relaunch failed experiments
-python athena.py -R <Figure>
-# Visualize results
-python athena.py -V <Figure>
-```
-
-### Available Experiments (Figures)
-
-| Figure | Description | Coordination | Components |
-|--------|-------------|--------------|------------|
-| Fig5a | OCP + L2C | POPET + Pythia | CD1 |
-| Fig5b | OCP + L1D | POPET + IPCP | CD2 |
-| Fig5c | OCP + 2 L2C | POPET + SMS + Pythia | CD3 |
-| Fig5d | OCP + L1D + L2C | POPET + IPCP + Pythia | CD4 |
-| Fig6b | L2C Type Sensitivity | POPET + various L2C | Pythia/SPP+PPF/MLOP/SMS |
-| Fig6c | OCP Latency Sensitivity | POPET + Pythia | 6/18/30 cycles |
-| Fig6d | OCP Type Sensitivity | Various OCP + Pythia | POPET/HMP/TTP |
-| Fig7a | L1D Type Sensitivity | POPET + various L1D + Pythia | IPCP/Berti |
-| Fig7b | Bandwidth Sensitivity | POPET + IPCP + Pythia | 1.6-12.8 GB/s |
-| Fig8 | L2C Only | SMS + Pythia (no OCP) | Generalizability Study |
-
-### Example: Running Figure 5a
-
-```bash
-# 1. Set environment
-source setvars.sh
-
-# 2. Launch experiments (on Slurm cluster)
-cd $ATHENA_HOME/scripts
-python athena.py -L Fig5a 
-
-# 3. Wait for jobs to complete (check with squeue)
-# Each trace-experiment combination takes ~3 hours
-
-# 4. Summarize results
-python athena.py -S Fig5a
-
-# 5. Relaunch experiments if needed (and summarize again)
-python athena.py -R Fig5a
-python athena.py -S Fig5a
-
-# 6. Visualize
-python athena.py -V Fig5a
-```
-
-## Understanding Results
-
-### Output Format
-
-Simulation outputs are stored in `experiments/<Figure>/`:
-- `<trace>_<experiment>.out` - Simulation statistics
-- `<trace>_<experiment>.err` - Error/debug output
-
-### CSV Format
-
-Aggregated results in `experiments/results/<Figure>.csv`:
-
-| Column | Description |
-|--------|-------------|
-| Trace | Workload trace name |
-| Exp | Experiment configuration name |
-| Core_0_cumulative_IPC | Instructions Per Cycle (main metric) |
-| Filter | 1 if all experiments for this trace completed |
-
-### Key Metrics
-
-The primary metric is **IPC Speedup** over baseline (no prefetching or OCP):
-```
-Speedup = IPC_experiment / IPC_baseline
-```
-
-Results are aggregated using **geometric mean** across traces, grouped by:
-- Workload type (SPEC, PARSEC, LIGRA, CVP)
-- Prefetcher-sensitivity (adverse vs. friendly)
-- Overall
+Please contact [Rahul Bera](mailto:write2bera@gmail.com) and [Zhenrong Lang](mailto:davidlang0832@gmail.com) if you have any questions/suggestions.
