@@ -14,34 +14,21 @@
     <a href="https://arxiv.org/abs/XXXX.YYYYY"><img src="https://img.shields.io/badge/cs.AR-XXXX.YYYYY-b31b1b?logo=arxiv&logoColor=red" alt="DOI"></a>
 </p>
 
-<!-- This artifact contains the implementation and evaluation infrastructure for **Athena**, a reinforcement learning-based technique for synergizing data prefetching and off-chip prediction. The artifact is built on top of ChampSim, a trace-driven CPU simulator. -->
-
-## Table of Contents
-
-- [Table of Contents](#table-of-contents)
-- [What is Athena?](#what-is-athena)
-- [Repository Overview](#repository-overview)
-- [Citation](#citation)
-- [Building the Simulator](#building-the-simulator)
-  - [0. Prerequisite](#0-prerequisite)
-  - [1. Clone the repository](#1-clone-the-repository)
-  - [2. Set up the environment](#2-set-up-the-environment)
-  - [3. Build the simulator](#3-build-the-simulator)
-  - [4. Verify the build](#4-verify-the-build)
-- [Obtaining Traces](#obtaining-traces)
-  - [Download Instructions](#download-instructions)
-  - [Verify Trace Integrity](#verify-trace-integrity)
-  - [Trace Count](#trace-count)
-- [Running Experiments](#running-experiments)
-  - [Using the Athena Tool](#using-the-athena-tool)
-  - [Example: Reproducing Figure 7](#example-reproducing-figure-7)
-- [Understanding Results](#understanding-results)
-  - [Experiment Output](#experiment-output)
-  - [Aggregated CSV File](#aggregated-csv-file)
-  - [Key Metrics](#key-metrics)
-- [Brief Code Walkthrough](#brief-code-walkthrough)
-- [License](#license)
-- [Contact](#contact)
+<details open="open">
+  <summary>Table of Contents</summary>
+  <ol>
+    <li><a href="#what-is-athena">What is Athena?</a></li>
+    <li><a href="#repository-overview">Repository Overview</a></li>
+    <li><a href="#citation">Citation</a></li>
+    <li><a href="#building-the-simulator">Building the Simulator</a></li>
+    <li><a href="#obtaining-traces">Obtaining Traces</a></li>
+    <li><a href="#running-experiments">Running Experiments</a></li>
+    <li><a href="#understanding-results">Understanding Results</a></li>
+    <li><a href="#brief-code-walkthrough">Brief Code Walkthrough</a></li>
+    <li><a href="#license">License</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ol>
+</details>
 
 
 ## What is Athena?
