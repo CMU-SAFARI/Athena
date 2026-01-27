@@ -11,7 +11,7 @@
 <p align="center">
     <a href="https://github.com/CMU-SAFARI/Athena/blob/master/LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-yellow.svg"></a>
     <a href="https://github.com/CMU-SAFARI/Athena/releases"><img alt="GitHub release" src="https://img.shields.io/github/release/CMU-SAFARI/Athena"></a>
-    <a href="https://arxiv.org/abs/XXXX.YYYYY"><img src="https://img.shields.io/badge/cs.AR-XXXX.YYYYY-b31b1b?logo=arxiv&logoColor=red" alt="DOI"></a>
+    <a href="https://arxiv.org/abs/2601.17615"><img src="https://img.shields.io/badge/cs.AR-2601.17615-b31b1b?logo=arxiv&logoColor=red" alt="DOI"></a>
 </p>
 
 <details open="open">
