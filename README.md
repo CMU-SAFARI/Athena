@@ -12,6 +12,7 @@
     <a href="https://github.com/CMU-SAFARI/Athena/blob/master/LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-yellow.svg"></a>
     <a href="https://github.com/CMU-SAFARI/Athena/releases"><img alt="GitHub release" src="https://img.shields.io/github/release/CMU-SAFARI/Athena"></a>
     <a href="https://arxiv.org/abs/2601.17615"><img src="https://img.shields.io/badge/cs.AR-2601.17615-b31b1b?logo=arxiv&logoColor=red" alt="DOI"></a>
+    <a href="https://doi.org/10.5281/zenodo.17854634"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.17854634.svg" alt="DOI"></a>
 </p>
 
 <details open="open">
@@ -113,6 +114,14 @@ The build produces a single binary `bin/champsim` that supports all prefetcher a
 ## Obtaining Traces
 
 Reproducing the results from the paper requires downloading the workload traces as mentioned below. However, this repository is fully compatible with any ChampSim traces.
+
+The traces can be downloaded via browser from the following repository:
+
+<p align="left">
+    Athena-Workloads <a href="https://doi.org/10.5281/zenodo.17850673"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.17850673.svg" alt="DOI"></a>
+</p>
+
+Alternatively, it can be from commandline as follows:
 
 ### Download Instructions
 
