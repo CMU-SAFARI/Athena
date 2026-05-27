@@ -9,7 +9,7 @@ inc = inc
 debug = 0
 
 CFlags = -Wall -g2 -O3 -std=c++11 -D_DEFAULT_SOURCE
-LDFlags = -lz
+LDFlags = -lz -llzma -lzstd
 libs = 
 libDir =
 
