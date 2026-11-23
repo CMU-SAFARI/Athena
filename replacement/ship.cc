@@ -28,7 +28,6 @@ void SHiPRepl::initialize_replacement() {
   }
 
   // randomly selected sampler sets
-  srand(time(NULL));
   unsigned long rand_seed = 1;
   unsigned long max_rand = 1048576;
   uint32_t my_set = LLC_SET;
